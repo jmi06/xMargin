@@ -43,9 +43,9 @@ data = {
         "delta_fourth": [],
 
         "delta_backend_zeroes": [],
-        "delta_zeroes_hammer": [],
-        "delta_zeroes_steal": [],
-        "delta_ends_hammer": [],
+        # "delta_zeroes_hammer": [],
+        # "delta_zeroes_steal": [],
+        # "delta_ends_hammer": [],
 
         "ends_remaining": [],
         "team_a_hammer": [],
@@ -67,9 +67,9 @@ data = {
         "delta_fourth": [],
 
         "delta_backend_zeroes": [],
-        "delta_zeroes_hammer": [],
-        "delta_zeroes_steal": [],
-        "delta_ends_hammer": [],
+        # "delta_zeroes_hammer": [],
+        # "delta_zeroes_steal": [],
+        # "delta_ends_hammer": [],
 
         "ends_remaining": [],
         "team_a_hammer": [],
@@ -142,9 +142,6 @@ for cat_name, cat in categories.items():
                     delta_backend_zeroes = 0
                     delta_zeroes_hammer = 0
                     delta_zeroes_steal = 0
-                    delta_ends_hammer = 0
-                    delta_zeroes_hammer = 0
-                    delta_zeroes_steal = 0
                     a_margin = 0
 
                     #Only build our features if its a full end.
@@ -158,31 +155,19 @@ for cat_name, cat in categories.items():
                         delta_backend_zeroes += team_a_shots[end][4:8].count(0) - team_b_shots[end][4:8].count(0)
                         a_margin += team_a['end_scores'][end-1] - team_b['end_scores'][end-1]
 
-                        if hammer_ends[end-1] == 'a':
-                            delta_zeroes_hammer += team_a_shots[end].count(0)
-                            delta_zeroes_steal -= team_b_shots[end].count(0)
-                        else:
-                            delta_zeroes_hammer -= team_b_shots[end].count(0)
-                            delta_zeroes_steal += team_a_shots[end].count(0)
 
                         # Add all the data
                         data[cat_name]['delta_lead'].append(delta_lead)
                         data[cat_name]['delta_second'].append(delta_second)
                         data[cat_name]['delta_third'].append(delta_third)
                         data[cat_name]['delta_fourth'].append(delta_fourth)
-
                         data[cat_name]['delta_backend_zeroes'].append(delta_backend_zeroes)
+
                         data[cat_name]['ends_remaining'].append(10 - int(end)) #When we implement 8 end games, this must be fixed
                         data[cat_name]['a_margin'].append(a_margin)
                         data[cat_name]['event'].append(event_data['name'])
                         data[cat_name]['game'].append(game['id'])
-                        # data[cat_name]['is_eight_end_game'].append(0) 
                         data[cat_name]['a_win_game'].append(1 if team_a['score'] > team_b['score'] else 0)
-                        data[cat_name]['delta_ends_hammer'].append( 
-                            hammer_ends[0:end].count('a') - hammer_ends[0:end].count('b')  
-                            )
-                        data[cat_name]['delta_zeroes_hammer'].append(delta_zeroes_hammer)
-                        data[cat_name]['delta_zeroes_steal'].append(delta_zeroes_steal)
                         data[cat_name]['is_even_end'].append( 1 if int(end) % 2 ==0 else 0)
                         data[cat_name]['LSFE_a'].append(team_a_lsfe)
 
@@ -191,6 +176,8 @@ for cat_name, cat in categories.items():
                         else:
                             data[cat_name]['team_a_hammer'].append('0')
 
+    for metric, metdata in data[cat_name].items():
+        print(metric, len(metdata))
     cat_data = pd.DataFrame(data[cat_name])
     cat_data.to_csv(f"data/{cat_name}/data.csv", index=False)
 
